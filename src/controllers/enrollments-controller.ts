@@ -12,16 +12,24 @@ export async function getEnrollmentByUser(req: AuthenticatedRequest, res: Respon
 }
 
 export async function postCreateOrUpdateEnrollment(req: AuthenticatedRequest, res: Response) {
-  await enrollmentsService.createOrUpdateEnrollmentWithAddress({
+  const result = await enrollmentsService.createOrUpdateEnrollmentWithAddress({
     ...req.body,
     userId: req.userId,
   });
 
-  return res.sendStatus(httpStatus.OK);
+  if (result === null || !req.body) {
+    return res.sendStatus(httpStatus.BAD_REQUEST);
+  } else {
+    res.sendStatus(httpStatus.OK);
+  }
 }
 
-// TODO - Receber o CEP do usuário por query params.
+// OK TODO - Receber o CEP do usuário por query params.
 export async function getAddressFromCEP(req: AuthenticatedRequest, res: Response) {
-  const address = await enrollmentsService.getAddressFromCEP();
+  const cep = req.query.cep as string;
+  const address = await enrollmentsService.getAddressFromCEP(cep);
+  if (!address) {
+    return res.sendStatus(httpStatus.BAD_REQUEST);
+  }
   res.status(httpStatus.OK).send(address);
 }
