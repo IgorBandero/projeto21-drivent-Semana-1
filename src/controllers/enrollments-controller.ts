@@ -12,12 +12,12 @@ export async function getEnrollmentByUser(req: AuthenticatedRequest, res: Respon
 }
 
 export async function postCreateOrUpdateEnrollment(req: AuthenticatedRequest, res: Response) {
-  const result = await enrollmentsService.createOrUpdateEnrollmentWithAddress({
+  const result : void | null = await enrollmentsService.createOrUpdateEnrollmentWithAddress({
     ...req.body,
     userId: req.userId,
   });
 
-  if (result === null || !req.body) {
+  if (result === null) {
     return res.sendStatus(httpStatus.BAD_REQUEST);
   } else {
     res.sendStatus(httpStatus.OK);
